@@ -15,7 +15,7 @@ use os_rust::println;
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    os_rust::hlt_loop();
 }
 
 //条件编译(测试)
@@ -33,9 +33,9 @@ fn panic(info: &PanicInfo) -> ! {
 pub extern "C" fn _start() -> ! {
     println!("ciallo");
     os_rust::init();
-    x86_64::instructions::interrupts::int3(); 
+    // x86_64::instructions::interrupts::int3(); 
 
     #[cfg(test)]
     test_main();
-    loop {}
+    os_rust::hlt_loop();
 }
