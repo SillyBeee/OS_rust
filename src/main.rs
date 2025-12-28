@@ -6,6 +6,7 @@
 
 use core::panic::PanicInfo;
 use os_rust::println;
+use bootloader::{BootInfo, entry_point};
 
 
 //panic handler
@@ -27,13 +28,18 @@ fn panic(info: &PanicInfo) -> ! {
 }
 
 
-
+entry_point!(kernel_main);
 
 #[unsafe(no_mangle)] // 不重整函数名
-pub extern "C" fn _start() -> ! {
+fn kernel_main(boot_info: &'static BootInfo) -> ! {
     println!("ciallo");
     os_rust::init();
     // x86_64::instructions::interrupts::int3(); 
+
+    use x86_64::registers::control::Cr3;
+
+    let (level_4_page_table, _) = Cr3::read();
+    println!("Level 4 page table at: {:?}", level_4_page_table.start_address());
 
     #[cfg(test)]
     test_main();
